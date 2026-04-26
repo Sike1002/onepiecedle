@@ -293,13 +293,33 @@ body:has(.game-root) > footer {
 
 /* ===== Board — stacked below the input ===== */
 .game-root .board-wrap {
+  position: relative;
   margin-top: 18px; padding: 18px 16px 16px;
   border: 3px solid var(--ink); background: #fff;
   box-shadow: 6px 6px 0 0 var(--ink);
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-color: var(--ink) var(--paper);
 }
 .game-root .board-wrap::-webkit-scrollbar { height: 8px; }
 .game-root .board-wrap::-webkit-scrollbar-thumb { background: var(--ink); }
+.game-root .board-fade {
+  position: sticky;
+  left: 100%;
+  z-index: 3;
+  width: 24px;
+  height: 1px;
+  pointer-events: none;
+}
+.game-root .board-fade::after {
+  content: "";
+  position: absolute;
+  top: -18px;
+  right: -16px;
+  width: 34px;
+  height: 160px;
+  background: linear-gradient(90deg, transparent, rgba(14, 14, 16, 0.14));
+}
 
 .game-root .board-head {
   display: flex; gap: 6px; padding-left: 74px; margin-bottom: 8px;

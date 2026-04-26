@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { BarChart2, ChevronLeft, HelpCircle } from "lucide-react";
 import { useCountdown } from "@/lib/useCountdown";
-import { useClientDateLabel } from "@/lib/useClientDateLabel";
+import { useClientDateLabel, useClientDateLabelFor } from "@/lib/useClientDateLabel";
 
 interface Props {
   title: string;
@@ -11,6 +11,10 @@ interface Props {
   rightMeta?: string;
   /** Optional streak chip; rendered only when > 0. */
   streak?: number;
+  /** Optional target date for archive practice. Defaults to today. */
+  targetDate?: Date;
+  /** Hide reset countdown for archive practice. */
+  showReset?: boolean;
   onStats: () => void;
   onHow: () => void;
 }
@@ -18,9 +22,23 @@ interface Props {
 /** Shared sticky mode header: back button, Bungee title + date + streak/reset
  * line, stats + how-to icon buttons. Ported from the 5 inline copies that
  * lived in each mode page. */
-export function ModeHeader({ title, rightMeta, streak = 0, onStats, onHow }: Props) {
+export function ModeHeader({
+  title,
+  rightMeta,
+  streak = 0,
+  targetDate,
+  showReset = true,
+  onStats,
+  onHow,
+}: Props) {
   const countdown = useCountdown();
   const todayLabel = useClientDateLabel();
+  const targetDateLabel = useClientDateLabelFor(
+    targetDate ?? null,
+    { month: "short", day: "numeric" },
+    "",
+  );
+  const dateLabel = targetDate ? targetDateLabel : todayLabel;
   return (
     <header className="top">
       <div className="top-inner">
@@ -30,16 +48,16 @@ export function ModeHeader({ title, rightMeta, streak = 0, onStats, onHow }: Pro
         <div className="title-wrap">
           <div className="title">
             <span className="title-name">{title}</span>
-            {todayLabel && (
+            {dateLabel && (
               <span className="title-date">
                 <span className="dot-sep">·</span>
-                <span style={{ color: "var(--blood)" }}>{todayLabel}</span>
+                <span style={{ color: "var(--blood)" }}>{dateLabel}</span>
               </span>
             )}
           </div>
           <div className="sub">
             {streak > 0 && <span className="fire">🔥 streak {streak}</span>}
-            <span>· reset in {countdown}</span>
+            {showReset && <span>· reset in {countdown}</span>}
             {rightMeta && <span>· {rightMeta}</span>}
           </div>
         </div>

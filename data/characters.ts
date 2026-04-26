@@ -18,6 +18,7 @@
  *  8  Little Garden
  *  9  Drum Island
  * 10  Alabasta
+ * 11  Jaya
  * 12  Skypiea
  * 14  Water 7
  * 15  Enies Lobby
@@ -419,7 +420,7 @@ export const characters: OnePieceCharacter[] = [
     haki: ["Observation", "Armament", "Conqueror's"],
     origin: "Grand Line",
     status: "Deceased",
-    firstArcNumber: 17,
+    firstArcNumber: 11,
     quotes: [
       "Gurarara!",
       "My sons!",
@@ -652,7 +653,7 @@ export const characters: OnePieceCharacter[] = [
     haki: ["Observation", "Armament", "Conqueror's"],
     origin: "Grand Line",
     status: "Alive",
-    firstArcNumber: 17,
+    firstArcNumber: 11,
     quotes: [
       "Fufufu… this country is mine.",
       "The world's truth is decided by the winners.",
@@ -751,7 +752,7 @@ export const characters: OnePieceCharacter[] = [
     haki: ["Observation", "Armament"],
     origin: "South Blue",
     status: "Alive",
-    firstArcNumber: 16,
+    firstArcNumber: 11,
     quotes: [
       "Where would you like to go?",
       "Bonney…",
@@ -819,7 +820,7 @@ export const characters: OnePieceCharacter[] = [
     haki: ["Observation", "Armament", "Conqueror's"],
     origin: "Unknown",
     status: "Alive",
-    firstArcNumber: 17,
+    firstArcNumber: 11,
     quotes: [
       "Justice.",
       "Mu.",
@@ -981,7 +982,7 @@ export const characters: OnePieceCharacter[] = [
     affiliation: ["Marines"],
     devilFruitType: "Logia",
     devilFruitName: "Moku Moku no Mi",
-    haki: ["None"],
+    haki: ["Observation", "Armament"],
     origin: "Grand Line",
     status: "Alive",
     firstArcNumber: 6,
@@ -1082,7 +1083,7 @@ export const characters: OnePieceCharacter[] = [
     affiliation: ["Revolutionary Army"],
     devilFruitType: "Logia",
     devilFruitName: "Mera Mera no Mi",
-    haki: ["Observation", "Armament", "Conqueror's"],
+    haki: ["Observation", "Armament"],
     origin: "East Blue",
     status: "Alive",
     firstArcNumber: 24,

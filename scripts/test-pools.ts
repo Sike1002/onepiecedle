@@ -1,7 +1,9 @@
-/** Static assertion that no post-S4 spoiler character appears in the
- * normal-mode pool. Run via `npm run test:pools`. */
-import { normalPool, deepcutPool, fullPool } from "../lib/characterPools";
+/** Static assertions for the Onepiecedle runtime pools. Run via
+ * `npm run test:pools`. */
+import { existsSync } from "fs";
+import { normalPool, deepcutPool, fullPool, silhouettePool } from "../lib/characterPools";
 import { characters } from "../data/characters";
+import type { OnePieceCharacter } from "../lib/types";
 
 let failed = 0;
 function assert(cond: boolean, msg: string) {
@@ -18,22 +20,41 @@ assert(normalPool.length >= 15, `normalPool has ≥15 characters (got ${normalPo
 assert(deepcutPool.length >= 5, `deepcutPool has ≥5 characters (got ${deepcutPool.length})`);
 assert(fullPool.length === characters.length, `fullPool equals source list`);
 
-// Nothing in normalPool is flagged as post-S4 or unknown.
+function hasOnePieceSource(c: OnePieceCharacter) {
+  return c.sources.some((source) => source.includes("onepiece.fandom.com/wiki/"));
+}
+
+function hasUniqueIds(pool: OnePieceCharacter[], name: string) {
+  const seen = new Set<string>();
+  for (const c of pool) {
+    assert(!seen.has(c.id), `${name} id is unique: ${c.id}`);
+    seen.add(c.id);
+  }
+}
+
+// Nothing in normalPool is manga-only, unreviewed, or unsafe.
 for (const c of normalPool) {
-  if (c.canonVisibility !== "prime_s1_s4") {
+  if (c.canonVisibility !== "anime_aired") {
     assert(false, `normalPool leak: ${c.id} has canonVisibility=${c.canonVisibility}`);
   }
   if (!c.safeForNormalModes) {
     assert(false, `normalPool leak: ${c.id} safeForNormalModes=false`);
   }
+  if (c.difficulty === "review") {
+    assert(false, `normalPool leak: ${c.id} difficulty=review`);
+  }
 }
 
-// Nothing safe-for-normal-modes leaks into deepcutPool (deepcut is a separate
-// *answer* pool; safeForNormalModes and canonVisibility are independent of
-// tier though, so this just confirms the canon flag drives pool membership).
+// Deep-Cut answers are manga-only spoilers and not normal-mode safe.
 for (const c of deepcutPool) {
-  if (c.canonVisibility !== "post_s4_comic_spoiler") {
+  if (c.canonVisibility !== "manga_only_spoiler") {
     assert(false, `deepcutPool member wrong visibility: ${c.id} ${c.canonVisibility}`);
+  }
+  if (c.safeForNormalModes) {
+    assert(false, `deepcutPool leak: ${c.id} safeForNormalModes=true`);
+  }
+  if (c.difficulty === "review") {
+    assert(false, `deepcutPool leak: ${c.id} difficulty=review`);
   }
 }
 
@@ -47,28 +68,47 @@ for (const c of deepcutPool) {
 }
 assert(true, `normalPool and deepcutPool are disjoint`);
 
-// Normal-mode facts must be show-safe, not comic-finale facts. If a character
-// appears in normalPool, their public source should be the Amazon/Prime wiki
-// and their first appearance should be a show season.
-for (const c of normalPool) {
-  if (c.firstAppearanceSeason === "Comics-only") {
-    assert(false, `normalPool leak: ${c.id} is marked Comics-only`);
+hasUniqueIds(characters, "characters");
+hasUniqueIds(fullPool, "fullPool");
+hasUniqueIds(normalPool, "normalPool");
+hasUniqueIds(deepcutPool, "deepcutPool");
+
+const fullIds = new Set(fullPool.map((c) => c.id));
+for (const c of characters) {
+  const ctx = c.id;
+  assert(fullIds.has(c.id), `fullPool includes ${ctx}`);
+  assert(c.name.trim().length > 0, `${ctx} has name`);
+  assert(c.fullName.trim().length > 0, `${ctx} has fullName`);
+  assert(c.race.length > 0, `${ctx} has race`);
+  assert(c.affiliation.length > 0, `${ctx} has affiliation`);
+  assert(c.haki.length > 0, `${ctx} has haki list`);
+  assert(c.quotes.length >= 1, `${ctx} has at least one quote`);
+  assert(c.emojis.length === 6, `${ctx} has exactly 6 emojis`);
+  assert(c.powerDescription.trim().length > 0, `${ctx} has powerDescription`);
+  assert(hasOnePieceSource(c), `${ctx} has One Piece Wiki source`);
+  assert(existsSync(`public${c.portraitUrl}`), `${ctx} portrait exists`);
+  if (c.devilFruitType === "None") {
+    assert(c.devilFruitName === null, `${ctx} has no Devil Fruit name when type=None`);
+  } else {
+    assert(Boolean(c.devilFruitName), `${ctx} has Devil Fruit name for ${c.devilFruitType}`);
   }
-  if (c.sources.some((source) => source.includes("comic-invincible.fandom.com"))) {
-    assert(false, `normalPool leak: ${c.id} uses comic wiki source`);
+  if (c.safeForNormalModes) {
+    assert(c.canonVisibility === "anime_aired", `${ctx} normal-safe implies anime_aired`);
+  }
+  if (c.canonVisibility === "manga_only_spoiler") {
+    assert(!c.safeForNormalModes, `${ctx} manga-only implies not normal-safe`);
   }
 }
 
-const thragg = characters.find((c) => c.id === "thragg");
-assert(Boolean(thragg), "thragg exists in character data");
-if (thragg) {
-  assert(normalIds.has(thragg.id), "thragg is available in normal modes after S4 debut");
-  assert(thragg.status === "Alive", `thragg status is Prime-safe Alive (got ${thragg.status})`);
-  assert(thragg.firstAppearanceSeason === 4, `thragg first appears in S4 (got ${thragg.firstAppearanceSeason})`);
-  assert(
-    thragg.sources.every((source) => source.includes("amazon-invincible.fandom.com")),
-    `thragg uses Amazon source (${thragg.sources.join(", ")})`,
-  );
+const silhouetteIds = new Set(silhouettePool.map((c) => c.id));
+for (const c of silhouettePool) {
+  assert(normalIds.has(c.id), `silhouettePool member is normal-safe: ${c.id}`);
+  assert(existsSync(`public/silhouettes/${c.id}.webp`), `${c.id} silhouette exists`);
+}
+for (const c of normalPool) {
+  if (!silhouetteIds.has(c.id)) {
+    assert(!existsSync(`public/silhouettes/${c.id}.webp`), `${c.id} intentionally excluded from silhouettePool`);
+  }
 }
 
 console.log(

@@ -25,6 +25,9 @@ export function SuggestionsList({ suggestions, highlight, onHover, onPick }: Pro
           onMouseEnter={() => onHover(i)}
           onMouseDown={(e) => {
             e.preventDefault();
+          }}
+          onClick={(e) => {
+            e.preventDefault();
             onPick(ch);
           }}
           type="button"

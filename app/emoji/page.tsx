@@ -120,6 +120,8 @@ function EmojiContent() {
       <ModeHeader
         title="Emoji"
         streak={stats?.streak ?? 0}
+        targetDate={practiceMode ? targetDate : undefined}
+        showReset={!practiceMode}
         rightMeta="4 of 6 clues start visible"
         onStats={() => setShowStats(true)}
         onHow={() => setShowHow(true)}

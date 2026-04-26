@@ -18,15 +18,17 @@ import { buildShareText } from "@/lib/shareText";
 import "../game-theme.css";
 
 /** Reveal progression. The silhouette layer sits on top of the real portrait;
- * its opacity drops as wrong guesses accumulate, gradually exposing color and
- * facial detail underneath. Stays at 100% (pure shape only) for the first two
- * misses so early guessing depends solely on body proportions and pose. */
+ * its opacity drops with every wrong guess, gradually exposing color and
+ * facial detail underneath. */
 function silhouetteOpacityFor(wrong: number): number {
-  if (wrong <= 2) return 1;
-  if (wrong <= 4) return 0.85;
-  if (wrong <= 6) return 0.65;
-  if (wrong <= 8) return 0.4;
-  if (wrong < 10) return 0.18;
+  if (wrong <= 0) return 1;
+  if (wrong === 1) return 0.88;
+  if (wrong === 2) return 0.76;
+  if (wrong === 3) return 0.62;
+  if (wrong === 4) return 0.48;
+  if (wrong === 5) return 0.34;
+  if (wrong === 6) return 0.22;
+  if (wrong < 9) return 0.12;
   return 0;
 }
 
@@ -132,6 +134,8 @@ function SilhouetteContent() {
       <ModeHeader
         title="Silhouette"
         streak={stats?.streak ?? 0}
+        targetDate={practiceMode ? targetDate : undefined}
+        showReset={!practiceMode}
         rightMeta="brightens on miss"
         onStats={() => setShowStats(true)}
         onHow={() => setShowHow(true)}

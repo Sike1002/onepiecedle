@@ -124,6 +124,8 @@ function DevilFruitContent() {
       <ModeHeader
         title="Devil Fruit"
         streak={stats?.streak ?? 0}
+        targetDate={practiceMode ? targetDate : undefined}
+        showReset={!practiceMode}
         rightMeta="profile only"
         onStats={() => setShowStats(true)}
         onHow={() => setShowHow(true)}

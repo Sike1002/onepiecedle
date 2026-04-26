@@ -129,6 +129,8 @@ function QuoteContent() {
       <ModeHeader
         title="Quote"
         streak={stats?.streak ?? 0}
+        targetDate={practiceMode ? targetDate : undefined}
+        showReset={!practiceMode}
         rightMeta="only exact speaker wins"
         onStats={() => setShowStats(true)}
         onHow={() => setShowHow(true)}

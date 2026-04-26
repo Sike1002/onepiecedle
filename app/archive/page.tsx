@@ -58,6 +58,7 @@ export default function ArchivePage() {
   const isDeepcut = mode === "deepcut";
   const gated = isDeepcut && spoilerAck !== true;
   const poolSize = isDeepcut ? "—" : String(normalPool.length);
+  const modeLabel = TABS.find((t) => t.mode === mode)?.label ?? "Mode";
 
   return (
     <HalftoneBg>
@@ -138,10 +139,20 @@ export default function ArchivePage() {
                   <li key={key}>
                     <Link
                       href={`/${mode}?date=${key}`}
+                      aria-label={`${modeLabel} ${label} practice puzzle`}
                       className="block bg-surface border-4 border-black shadow-comic-primary p-3 hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all"
                     >
                       <div className="flex items-center gap-3">
-                        <CharacterAvatar character={answer} size={48} silhouette brightness={0} />
+                        <div className="relative h-12 w-12 shrink-0 overflow-hidden border-2 border-black bg-primary/25">
+                          <CharacterAvatar
+                            character={answer}
+                            size={48}
+                            silhouette
+                            brightness={0.16}
+                            decorative
+                          />
+                          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,rgba(244,211,94,0.28)_1px,transparent_1.5px)] bg-[length:8px_8px]" />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-[10px] uppercase tracking-wide text-muted">
                             {label}

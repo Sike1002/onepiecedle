@@ -294,6 +294,8 @@ export function ClassicBoard({ mode, title, enableArchive = false, poolDescripti
       <ModeHeader
         title={shellTitle}
         streak={streakNum}
+        targetDate={practiceMode ? targetDate : undefined}
+        showReset={!practiceMode}
         rightMeta={mode === "deepcut" ? "manga deep cuts" : `${normalPool.length} pirates`}
         onStats={() => setShowStats(true)}
         onHow={() => setShowHow(true)}
@@ -393,6 +395,7 @@ export function ClassicBoard({ mode, title, enableArchive = false, poolDescripti
 
         {guesses.length > 0 ? (
           <div className="board-wrap">
+            <div className="board-fade" aria-hidden="true" />
             <div className="board-head">
               {headerKeys.map(([k, label]) => (
                 <div key={k} className={`hcell ${hidden.has(k) ? "hidden" : ""}`}>
