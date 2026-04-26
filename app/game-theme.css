@@ -1,0 +1,943 @@
+/* Mode page styles — pirate / wanted-poster theme. Scoped under .game-root
+ * so it cascades into /classic, /quote, /silhouette, /emoji, /devilfruit,
+ * /deepcut, /archive without bleeding into the home page. */
+
+.game-root {
+  /* Variable names retained from the original design bundle so the layout
+   * rules don't churn; the values are reskinned to the pirate palette. */
+  --blue: #f3e4be;          /* parchment background */
+  --blue-deep: #d6c188;
+  --yellow: #f4d35e;        /* straw-hat yellow */
+  --blood: #9c2a2a;         /* straw-hat red */
+  --ok: #6b8e23;            /* moss green */
+  --warn: #e8a838;          /* lantern amber */
+  --ink: #0e0e10;           /* jolly black */
+  --ink-soft: #3b2a1a;
+  --muted: #6b5235;
+  --paper: #fdf6e3;         /* cream paper */
+
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(156, 42, 42, 0.05), transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(26, 78, 122, 0.06), transparent 50%),
+    var(--blue);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* `clip` (not `hidden`) avoids creating a vertical scroll container, which
+   * would hijack touch scrolling whenever this element ends up a few px
+   * taller than its flex slot. */
+  overflow-x: clip;
+}
+
+/* Hide the layout's dark-theme fan-project footer on these pages — the
+   classic-root carries its own footer that matches the light theme. */
+body:has(.game-root) > footer {
+  display: none;
+}
+
+.game-root a { color: inherit; text-decoration: none; }
+.game-root button { font-family: inherit; cursor: pointer; }
+.game-root,
+.game-root *,
+.game-root *::before,
+.game-root *::after {
+  box-sizing: border-box;
+}
+.game-root *:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+.game-root::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  background-image: radial-gradient(circle, rgba(11, 23, 36, 0.09) 1px, transparent 1.2px);
+  background-size: 14px 14px;
+}
+
+.game-root .cloud {
+  position: absolute; border: 3px solid var(--ink); background: var(--paper);
+  box-shadow: 5px 5px 0 0 var(--ink);
+  z-index: 1; pointer-events: none;
+}
+.game-root .cloud.c1 { top: 180px; right: 6%; width: 70px; height: 26px; transform: rotate(-6deg); }
+.game-root .cloud.c2 { top: 420px; left: 3%; width: 50px; height: 22px; transform: rotate(4deg); }
+/* On narrow viewports the decorative clouds drift over content. Hide them
+   below 720px so the guess hint and form aren't visually crossed. */
+@media (max-width: 720px) {
+  .game-root .cloud.c2 { display: none; }
+}
+.game-root .splat { position: absolute; z-index: 1; pointer-events: none; }
+.game-root .splat path { fill: var(--blood); }
+
+.game-root .wrap {
+  position: relative; z-index: 2;
+  max-width: 960px; margin: 0 auto; padding: 0 20px;
+}
+
+/* ===== Sticky header ===== */
+.game-root .top {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--blue);
+  border-bottom: 2px solid var(--ink);
+}
+.game-root .top-inner {
+  max-width: 960px; margin: 0 auto; padding: 14px 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.game-root .title-wrap { flex: 1; min-width: 0; margin-left: 8px; }
+.game-root .title-wrap .title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 4.5vw, 34px);
+  line-height: 1.05;
+  color: var(--ink);
+  /* Allow the title to wrap before the date, but never inside the date. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 6px;
+  row-gap: 2px;
+  word-break: break-word;
+}
+.game-root .title-wrap .title .title-name { white-space: nowrap; }
+.game-root .title-wrap .title .title-date {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+.game-root .title-wrap .title .dot-sep { color: var(--blood); margin: 0 6px 0 0; }
+.game-root .title-wrap .sub {
+  margin-top: 4px;
+  font-size: 11px; font-weight: 900; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-soft);
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.game-root .sub .fire { color: var(--blood); }
+.game-root .icon-btn {
+  width: 40px; height: 40px; border: 2px solid var(--ink); background: #fff;
+  display: grid; place-items: center; color: var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+  transition: transform 0.12s, box-shadow 0.12s;
+  flex: 0 0 auto;
+}
+.game-root .icon-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 0 var(--ink); }
+.game-root .icon-btn.back { background: var(--yellow); }
+
+@media (max-width: 560px) {
+  .game-root .top-inner {
+    padding: 12px 16px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .game-root .title-wrap {
+    order: 3;
+    flex: 0 0 100%;
+    margin-left: 0;
+  }
+  .game-root .title-wrap .title {
+    font-size: clamp(22px, 8vw, 30px);
+  }
+  .game-root .title-wrap .title .title-name {
+    white-space: normal;
+  }
+  .game-root .title-wrap .sub {
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .game-root .icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* ===== Main board ===== */
+.game-root main { padding: 28px 0 60px; }
+
+/* Practice / archive banner */
+.game-root .practice {
+  margin-bottom: 14px; padding: 10px 14px;
+  background: var(--blood); color: #fff; border: 2.5px solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+  font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;
+  display: flex; justify-content: space-between; gap: 10px;
+  align-items: center; flex-wrap: wrap;
+}
+.game-root .practice a { border-bottom: 2px solid #fff; padding-bottom: 1px; }
+
+/* Hard-mode row */
+.game-root .hardrow {
+  display: flex; justify-content: center; align-items: center;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.game-root .hardbtn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border: 2px solid var(--ink); background: #fff; color: var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+  font-size: 11px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.game-root .hardbtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.game-root .hardbtn.on { background: var(--blood); color: #fff; }
+.game-root .hardnote {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+
+/* ===== Guess block — centered on the page ===== */
+.game-root .guess-block {
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.game-root .guess-field {
+  width: 100%; background: #fff; border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 0 var(--ink);
+  padding: 16px 18px; font-size: 18px; font-weight: 800; color: var(--ink);
+  font-family: inherit; display: block;
+}
+.game-root .guess-field::placeholder { color: #8ea0b4; }
+.game-root .guess-field:disabled { opacity: 0.7; cursor: not-allowed; }
+.game-root .guess-hint {
+  margin-top: 10px; font-size: 12px; color: var(--ink-soft);
+  font-weight: 600; text-align: center;
+}
+.game-root .guess-hint b { color: var(--ink); }
+
+.game-root .suggestions {
+  margin-top: 10px; background: #fff; border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 0 var(--ink);
+}
+.game-root .sugg {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+  border-bottom: 1.5px solid var(--ink); cursor: pointer;
+  text-align: left; background: transparent; width: 100%; border-left: 0; border-right: 0; border-top: 0;
+}
+.game-root .sugg:last-child { border-bottom: none; }
+.game-root .sugg > div:last-child { flex: 1; min-width: 0; }
+.game-root .sugg.active { background: var(--yellow); }
+.game-root .sugg .sugg-avatar {
+  width: 36px; height: 36px; border: 2px solid var(--ink); background: var(--blue);
+  display: block; overflow: hidden; flex: 0 0 auto;
+}
+.game-root .sugg .sugg-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
+.game-root .sugg .name { font-weight: 900; color: var(--ink); }
+.game-root .sugg .alias { font-size: 11px; color: var(--muted); font-weight: 600; }
+.game-root .sugg.active .alias { color: var(--ink-soft); }
+
+/* ===== Legend ===== */
+.game-root .legend {
+  margin: 24px auto 0; display: flex; gap: 10px; flex-wrap: wrap;
+  align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 900; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-soft);
+  max-width: 900px;
+}
+.game-root .legend .swatch {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 8px; border: 2px solid var(--ink); background: #fff;
+}
+.game-root .legend .box { width: 12px; height: 12px; border: 1.5px solid var(--ink); }
+.game-root .box.ex { background: var(--ok); }
+.game-root .box.pa { background: var(--warn); }
+.game-root .box.no { background: var(--blood); }
+.game-root .box.hi { background: var(--blue); }
+
+@media (max-width: 560px) {
+  .game-root .practice {
+    align-items: flex-start;
+    flex-direction: column;
+    display: block;
+    line-height: 1.35;
+    padding: 10px 12px;
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    overflow-wrap: anywhere;
+  }
+  .game-root .practice span {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .game-root .practice a {
+    display: inline-block;
+    margin-top: 8px;
+  }
+  .game-root .hardrow {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .game-root .hardnote {
+    text-align: center;
+  }
+  .game-root .legend {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    gap: 8px;
+  }
+  .game-root .legend > span:first-child {
+    text-align: center;
+  }
+  .game-root .legend .swatch {
+    width: 100%;
+    justify-content: center;
+    min-width: 0;
+    padding: 4px 6px;
+    text-align: center;
+    letter-spacing: 0.06em;
+  }
+}
+
+/* ===== Board — stacked below the input ===== */
+.game-root .board-wrap {
+  margin-top: 18px; padding: 18px 16px 16px;
+  border: 3px solid var(--ink); background: #fff;
+  box-shadow: 6px 6px 0 0 var(--ink);
+  overflow-x: auto;
+}
+.game-root .board-wrap::-webkit-scrollbar { height: 8px; }
+.game-root .board-wrap::-webkit-scrollbar-thumb { background: var(--ink); }
+
+.game-root .board-head {
+  display: flex; gap: 6px; padding-left: 74px; margin-bottom: 8px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 900; color: var(--muted);
+  min-width: max-content;
+}
+@media (min-width: 720px) { .game-root .board-head { padding-left: 86px; } }
+.game-root .board-head .hcell { width: 60px; text-align: center; }
+@media (min-width: 720px) { .game-root .board-head .hcell { width: 70px; } }
+.game-root .board-head .hcell.hidden { opacity: 0.4; text-decoration: line-through; }
+
+.game-root .board-rows {
+  display: flex; flex-direction: column; gap: 8px; min-width: max-content;
+}
+
+.game-root .row { display: flex; gap: 6px; align-items: stretch; }
+.game-root .row .avatar-col { width: 68px; flex: 0 0 auto; }
+@media (min-width: 720px) { .game-root .row .avatar-col { width: 80px; } }
+.game-root .row .avatar-col .row-avatar {
+  width: 60px; height: 60px; border: 2.5px solid var(--ink); background: var(--blue);
+  display: block; overflow: hidden;
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+@media (min-width: 720px) {
+  .game-root .row .avatar-col .row-avatar { width: 70px; height: 70px; }
+}
+.game-root .row .avatar-col .row-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
+.game-root .row .avatar-col .name {
+  margin-top: 6px; width: 60px; font-size: 10px; font-weight: 900;
+  text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.1;
+  text-align: center; color: var(--ink);
+  /* Allow long names like "William Clockwell" to wrap to two lines instead
+     of being silently ellipsised. Cap at two lines so layout stays stable. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}
+@media (min-width: 720px) { .game-root .row .avatar-col .name { width: 70px; } }
+
+.game-root .cell {
+  width: 60px; height: 60px; border: 2.5px solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+  display: grid; place-items: center; padding: 3px;
+  font-size: 9px; font-weight: 900; text-transform: uppercase;
+  text-align: center; line-height: 1.05;
+  animation: classic-flipIn 0.5s ease both;
+}
+@media (min-width: 720px) {
+  .game-root .cell { width: 70px; height: 70px; font-size: 10.5px; }
+}
+@keyframes classic-flipIn {
+  0% { transform: rotateY(180deg); opacity: 0; }
+  100% { transform: rotateY(0); opacity: 1; }
+}
+.game-root .cell.ex { background: var(--ok); color: #05321f; }
+.game-root .cell.pa { background: var(--warn); color: #3a2300; }
+.game-root .cell.no { background: var(--blood); color: #fff; }
+.game-root .cell.hi {
+  background: var(--blue); color: var(--ink-soft);
+  background-image: radial-gradient(circle, rgba(11, 23, 36, 0.15) 1px, transparent 1.2px);
+  background-size: 8px 8px;
+}
+.game-root .cell .lbl {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  width: 100%;
+  /* Long unbreakable values like "Mythical Zoan" or compound labels need to
+     break to fit a 60–70px cell. Without these, text overflows horizontally. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  line-height: 1.05;
+}
+.game-root .cell .lbl span { max-width: 100%; }
+.game-root .cell .arrow { display: inline-flex; }
+
+/* Small note shown when there are no guesses yet */
+.game-root .board-empty {
+  text-align: center;
+  padding: 28px 18px;
+  border: 2.5px dashed var(--ink); background: rgba(255, 255, 255, 0.55);
+  margin-top: 18px;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+
+/* ===== Win screen ===== */
+.game-root .win {
+  margin-top: 24px; position: relative;
+  border: 3px solid var(--ink); background: #fff;
+  box-shadow: 6px 6px 0 0 var(--ink);
+  padding: 28px 22px; text-align: center; overflow: hidden;
+}
+.game-root .win::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.35;
+  background-image: radial-gradient(circle, rgba(251, 191, 36, 0.35) 1px, transparent 1.2px);
+  background-size: 12px 12px;
+}
+.game-root .win > * { position: relative; }
+.game-root .burst {
+  display: inline-block; font-family: var(--font-display);
+  background: var(--yellow); color: var(--ink);
+  padding: 8px 20px; border: 3px solid var(--ink);
+  transform: rotate(-3deg); letter-spacing: 0.1em;
+  box-shadow: 4px 4px 0 0 var(--ink); font-size: 22px;
+}
+.game-root .win .who {
+  margin-top: 22px; display: flex; align-items: center;
+  gap: 18px; justify-content: center; flex-wrap: wrap;
+}
+.game-root .win .who .win-avatar {
+  width: 82px; height: 82px; border: 3px solid var(--ink); background: var(--blue);
+  display: block; overflow: hidden;
+  box-shadow: 4px 4px 0 0 var(--ink);
+}
+.game-root .win .who .win-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
+.game-root .win .info { text-align: left; min-width: 0; max-width: 100%; }
+.game-root .win .info .n {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 6vw, 30px);
+  line-height: 1.05; color: var(--ink);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.game-root .win .info .d {
+  margin-top: 4px; font-size: 12px; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.game-root .win .info .d b { color: var(--blood); }
+.game-root .share-grid {
+  display: inline-block; margin-top: 20px; padding: 12px 14px;
+  border: 2.5px dashed var(--ink); background: var(--blue);
+  font-family: ui-monospace, Menlo, monospace; font-size: 13px; line-height: 1.35;
+  color: var(--ink); text-align: left;
+}
+.game-root .share-grid pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.game-root .actions {
+  margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+}
+.game-root .btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border: 3px solid var(--ink); background: #fff; color: var(--ink);
+  box-shadow: 4px 4px 0 0 var(--ink);
+  font-weight: 900; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.game-root .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--ink); }
+.game-root .btn.primary { background: var(--yellow); }
+.game-root .btn.blood { background: var(--blood); color: #fff; }
+
+/* ===== Modals (stats / how-to) ===== */
+.game-root .modal-back {
+  position: fixed; inset: 0; background: rgba(11, 23, 36, 0.55);
+  z-index: 40; align-items: center; justify-content: center; padding: 20px;
+  display: none;
+}
+.game-root .modal-back.open { display: flex; }
+.game-root .modal {
+  width: 100%; max-width: 460px; background: #fff; border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 0 var(--ink);
+  padding: 22px;
+}
+.game-root .modal h3 {
+  margin: 0 0 14px; font-family: var(--font-display); font-weight: 400;
+  text-transform: uppercase; font-size: 22px; letter-spacing: 0.06em;
+  color: var(--ink); display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.game-root .modal h3 button {
+  width: 32px; height: 32px; border: 2px solid var(--ink); background: var(--yellow);
+  box-shadow: 2px 2px 0 0 var(--ink); font-family: var(--font-display); font-size: 14px; color: var(--ink);
+}
+.game-root .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 460px) { .game-root .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.game-root .stat {
+  border: 2.5px solid var(--ink); background: var(--blue); padding: 12px 8px;
+  box-shadow: 3px 3px 0 0 var(--ink); text-align: center;
+}
+.game-root .stat .n { font-family: var(--font-display); font-size: 26px; color: var(--ink); line-height: 1; }
+.game-root .stat.yellow { background: var(--yellow); }
+.game-root .stat.blood { background: var(--blood); }
+.game-root .stat.blood .n { color: #fff; }
+.game-root .stat .l {
+  margin-top: 6px; font-size: 10px; font-weight: 900; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.game-root .stat.blood .l { color: rgba(255, 255, 255, 0.85); }
+.game-root .dist { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; }
+.game-root .drow { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 900; }
+.game-root .dnum { width: 26px; text-align: center; color: var(--ink-soft); }
+.game-root .dbar { flex: 1; height: 22px; border: 2px solid var(--ink); background: var(--blue); position: relative; }
+.game-root .fill {
+  position: absolute; inset: 0 auto 0 0;
+  background: var(--yellow); display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 8px; font-family: var(--font-display); font-size: 11px; color: var(--ink);
+}
+.game-root .fill.won { background: var(--ok); }
+.game-root .fill.lost { background: var(--blood); color: #fff; }
+
+.game-root .how p {
+  font-size: 13px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 10px;
+}
+.game-root .how .lg { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 4px; }
+.game-root .lg-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.05em;
+}
+.game-root .lg-item .box { width: 20px; height: 20px; border: 2px solid var(--ink); }
+
+/* Footer */
+.game-root footer.bar {
+  margin-top: 60px; padding: 20px 0 30px;
+  border-top: 2px solid var(--ink);
+  font-size: 11px; color: var(--ink-soft); line-height: 1.6; text-align: center;
+  position: relative; z-index: 2;
+}
+.game-root footer.bar p { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+.game-root footer.bar b { color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .game-root .cell { animation: none !important; }
+}
+
+/* ================================================================
+ * Spoiler gate — the Deep-Cut barrier screen. Full-viewport panel,
+ * blood-red SPOILER WARNING burst, comic-book styling.
+ * ================================================================ */
+
+.game-root.spoiler-gate-root {
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.game-root .spoiler-gate-wrap {
+  max-width: 620px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+.game-root .spoiler-panel {
+  position: relative;
+  background: #fff;
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 0 var(--blood);
+  padding: 36px 28px 28px;
+  text-align: center;
+}
+.game-root .spoiler-burst {
+  display: inline-block;
+  font-family: var(--font-display);
+  background: var(--blood);
+  color: #fff;
+  padding: 10px 24px;
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 0 var(--ink);
+  transform: rotate(-2deg);
+  letter-spacing: 0.12em;
+  font-size: clamp(20px, 4vw, 28px);
+  margin-bottom: 22px;
+}
+.game-root .spoiler-copy {
+  margin: 0 0 14px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  font-weight: 600;
+  text-align: left;
+}
+.game-root .spoiler-copy.small {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.game-root .spoiler-actions {
+  margin-top: 22px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 560px) {
+  .game-root.spoiler-gate-root {
+    padding: 20px;
+    padding-left: max(20px, calc((100vw - 320px) / 2));
+    padding-right: 20px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 96px;
+    overflow-x: hidden;
+  }
+  .game-root .spoiler-gate-wrap {
+    flex: 0 1 320px;
+    width: min(320px, calc(100vw - 48px));
+    max-width: min(320px, calc(100vw - 48px));
+    min-width: 0;
+  }
+  .game-root .spoiler-panel {
+    width: 100%;
+    max-width: 100%;
+    padding: 30px 16px 24px;
+    box-shadow: 4px 4px 0 0 var(--blood);
+    min-width: 0;
+  }
+  .game-root .spoiler-burst {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: 9px 10px;
+    font-size: clamp(18px, 5.5vw, 22px);
+    letter-spacing: 0.08em;
+    transform: rotate(-1deg);
+    overflow-wrap: anywhere;
+  }
+  .game-root .spoiler-copy {
+    font-size: 14px;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+  .game-root .spoiler-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .game-root .spoiler-actions .btn {
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    white-space: normal;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ================================================================
+ * Quote mode — .clue panel, giant quote mark, serif blockquote,
+ * guess-list with strikethrough losers. Ported from Quote.html.
+ * ================================================================ */
+
+.game-root .clue {
+  position: relative;
+  border: 3px solid var(--ink);
+  background: #fff;
+  box-shadow: 6px 6px 0 0 var(--ink);
+  padding: 28px 22px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.game-root .clue.halftone-r {
+  background-image: radial-gradient(circle, rgba(220, 38, 38, 0.22) 1px, transparent 1.2px);
+  background-size: 10px 10px;
+  background-color: #fff;
+}
+.game-root .clue.halftone-y {
+  background-image: radial-gradient(circle, rgba(251, 191, 36, 0.3) 1px, transparent 1.2px);
+  background-size: 10px 10px;
+  background-color: #fff;
+}
+.game-root .quote-mark {
+  position: absolute;
+  top: -14px;
+  left: 14px;
+  font-family: var(--font-display);
+  font-size: 110px;
+  line-height: 0.7;
+  color: var(--blood);
+  opacity: 0.25;
+  pointer-events: none;
+  user-select: none;
+}
+.game-root blockquote.big {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: clamp(20px, 2.8vw, 28px);
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 0;
+  padding: 10px 10px 10px 36px;
+  border-left: 6px solid var(--blood);
+}
+.game-root .quote-attrib {
+  margin-top: 16px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 900;
+  text-align: right;
+}
+
+/* Quote's guess block is narrower and centered like classic's */
+.game-root > main > .guess-block {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* Guess list — stacked cards, strikethrough losers, green correct */
+.game-root .guess-list {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.game-root .guess-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2.5px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 0 var(--ink);
+  padding: 8px 12px;
+}
+.game-root .guess-list .list-avatar {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--ink);
+  background: var(--blue);
+  display: block;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+.game-root .guess-list .list-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+.game-root .guess-list .nm {
+  font-weight: 900;
+  color: var(--blood);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.game-root .guess-list li.correct {
+  background: #e7fbf1;
+}
+.game-root .guess-list li.correct .nm {
+  color: var(--ok);
+  text-decoration: none;
+}
+
+/* ================================================================
+ * Silhouette mode — yellow halftone frame, brightness reveal, meter.
+ * ================================================================ */
+
+.game-root .sil-wrap {
+  padding: 36px 22px;
+  text-align: center;
+}
+.game-root .sil-frame {
+  width: clamp(180px, 40vw, 260px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  box-shadow: 4px 4px 0 0 var(--ink);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+}
+.game-root .sil-portrait,
+.game-root .sil-figure {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+.game-root .sil-portrait {
+  z-index: 1;
+}
+.game-root .sil-figure {
+  z-index: 2;
+  opacity: var(--o, 1);
+  transition: opacity 0.5s ease;
+}
+.game-root .sil-meta {
+  margin-top: 16px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.game-root .sil-meta .n {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0;
+}
+.game-root .sil-meta .n.red {
+  color: var(--blood);
+}
+.game-root .reveal-bar {
+  margin: 14px auto 0;
+  max-width: 340px;
+}
+.game-root .reveal-bar .bar {
+  height: 16px;
+  border: 2.5px solid var(--ink);
+  background: var(--blue);
+  position: relative;
+  overflow: hidden;
+}
+.game-root .reveal-bar .bar .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--yellow);
+  width: var(--p, 15%);
+  transition: width 0.4s ease;
+}
+.game-root .reveal-bar .lbl {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+
+/* ================================================================
+ * Emoji mode — red halftone, 6 tiles (4 visible + 2 locked).
+ * ================================================================ */
+
+.game-root .emoji-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+@media (min-width: 720px) {
+  .game-root .emoji-row {
+    gap: 18px;
+  }
+}
+.game-root .emoji-tile {
+  font-size: 40px;
+  line-height: 1;
+  padding: 12px 16px;
+  border: 2.5px solid var(--ink);
+  background: #fff;
+  box-shadow: 3px 3px 0 0 var(--ink);
+  transform: rotate(var(--r, 0deg));
+  display: inline-block;
+}
+@media (min-width: 720px) {
+  .game-root .emoji-tile {
+    font-size: 60px;
+    padding: 14px 20px;
+  }
+}
+.game-root .emoji-tile.locked {
+  opacity: 0.55;
+  border-style: dashed;
+  color: var(--ink-soft);
+  background: var(--blue);
+}
+.game-root .emoji-hint {
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ================================================================
+ * Powers mode — yellow halftone with bolt icon + desc + tags.
+ * ================================================================ */
+
+.game-root .power-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.game-root .power-head .bolt {
+  width: 52px;
+  height: 52px;
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  display: grid;
+  place-items: center;
+  box-shadow: 3px 3px 0 0 var(--ink);
+  flex: 0 0 auto;
+}
+.game-root .power-kicker {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 900;
+}
+.game-root .power-desc {
+  margin: 6px 0 0;
+  font-size: clamp(16px, 2.2vw, 22px);
+  line-height: 1.4;
+  font-weight: 800;
+  color: var(--ink);
+}
+.game-root .power-tags {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.game-root .power-tag {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--blue);
+  border: 2px solid var(--ink);
+  padding: 4px 10px;
+  color: var(--ink);
+}
+.game-root .power-tag.y {
+  background: var(--yellow);
+}
+.game-root .power-tag.r {
+  background: var(--blood);
+  color: #fff;
+}

@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Pirate / wanted-poster palette */
+  --color-bg: #1a1410;            /* deep aged ink */
+  --color-surface: #2a1f17;       /* darker parchment shadow */
+  --color-border: #3b2a1a;        /* sepia border */
+  --color-primary: #f4d35e;       /* straw-hat yellow */
+  --color-secondary: #1a4e7a;     /* ocean blue */
+  --color-blood: #9c2a2a;         /* straw-hat red */
+  --color-green: #6b8e23;         /* moss green (success) */
+  --color-amber: #e8a838;         /* lantern amber */
+  --color-text: #fdf6e3;          /* parchment text */
+  --color-text-muted: #b8a07a;    /* faded sepia */
+}
+
+html, body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body, system-ui), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Halftone dot overlay utility — used as a parchment-noise texture. */
+.halftone {
+  background-image: radial-gradient(circle, rgba(244,211,94,0.06) 1px, transparent 1.2px);
+  background-size: 10px 10px;
+}
+
+.halftone-primary {
+  background-image: radial-gradient(circle, rgba(244,211,94,0.14) 1px, transparent 1.2px);
+  background-size: 12px 12px;
+}
+
+.halftone-blood {
+  background-image: radial-gradient(circle, rgba(156,42,42,0.18) 1px, transparent 1.2px);
+  background-size: 8px 8px;
+}
+
+/* Panel — wanted-poster border treatment */
+.panel {
+  background: var(--color-surface);
+  border: 3px solid #0e0e10;
+  box-shadow: 4px 4px 0 0 #0e0e10;
+}
+
+.panel-primary {
+  border: 3px solid #0e0e10;
+  box-shadow: 4px 4px 0 0 var(--color-primary);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Wordmark — pirate display font with wanted-poster treatment */
+.wordmark {
+  font-family: var(--font-display, Impact), sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Hide scrollbar but keep functional for horizontal classic grid */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

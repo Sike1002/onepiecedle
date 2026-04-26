@@ -1,0 +1,38 @@
+{
+  "name": "onepiecedle",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:static": "NEXT_STATIC_EXPORT=1 next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test:pools": "tsx scripts/test-pools.ts",
+    "pipeline": "tsx scripts/01-discover.ts && tsx scripts/02-extract.ts && tsx scripts/03-canonicalize.ts && tsx scripts/04-images.ts && tsx scripts/05-enrich.ts && tsx scripts/06-validate.ts && tsx scripts/07-emit.ts"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.0",
+    "framer-motion": "^11.11.17",
+    "fuse.js": "^7.0.0",
+    "lucide-react": "^0.454.0",
+    "next": "14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.35",
+    "p-queue": "^8.0.1",
+    "postcss": "^8.4.47",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^3.4.14",
+    "tsx": "^4.19.2",
+    "typescript": "^5.5.4"
+  }
+}

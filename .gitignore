@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+.DS_Store
+*.log
+# Pipeline artifacts: intermediate JSON cache (keep but allow trimming).
+scripts/data/cache/
+tsconfig.tsbuildinfo
+# Local AI / tooling state — not part of the project.
+.wolf/
+.claude/
+CLAUDE.md
